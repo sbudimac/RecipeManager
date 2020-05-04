@@ -9,10 +9,10 @@ namespace RecipeManager
 {
     public class Odgovor
     {
-        public string title;
-        string version;
-        string href;
-        List<Recept> results;
+        public string Title { get; set; }
+        public string Version { get; set; }
+        public string Href { get; set; }
+        public List<Recept> Results { get; set; }
 
         public static Odgovor GetOdgovor(string json)
         {
@@ -21,7 +21,7 @@ namespace RecipeManager
 
         public List<Recept> Rezultati
         {
-            get { return this.results; }
+            get { return this.Results; }
         }
     }
 }

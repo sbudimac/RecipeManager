@@ -123,8 +123,10 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Odgovor.cs" />
+    <Compile Include="OdgovorJson.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Recept.cs" />
+    <Compile Include="ReceptJson.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">

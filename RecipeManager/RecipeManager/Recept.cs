@@ -9,24 +9,24 @@ namespace RecipeManager
 {
     public class Recept
     {
-        string title;
-        string href;
-        string ingredients;
-        string thumbnail;
+        public string Title { get; set; }
+        public string Href { get; set; }
+        public string Ingredients { get; set; }
+        public string Thumbnail { get; set; }
 
         public List<string> Sastojci
         {
             get
             {
                 List<string> sastojciL = new List<string>();
-                sastojciL.AddRange(this.ingredients.Split(','));
+                sastojciL.AddRange(this.Ingredients.Split(','));
                 return sastojciL;
             }
         }
 
         public override string ToString()
         {
-            string recept = this.title + ": " + this.ingredients;
+            string recept = this.Title + ": " + this.Ingredients;
             return recept;
         }
     }
