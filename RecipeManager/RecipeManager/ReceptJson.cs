@@ -51,7 +51,12 @@ namespace RecipeManager
 
         public override void Write(Utf8JsonWriter writer, Recept value, JsonSerializerOptions options)
         {
-            throw new NotImplementedException();
+            writer.WriteStartObject();
+            writer.WriteString("title", value.Title);
+            writer.WriteString("href", value.Href);
+            writer.WriteString("ingredients", value.Ingredients);
+            writer.WriteString("thumbnail", value.Thumbnail);
+            writer.WriteEndObject();
         }
     }
 }

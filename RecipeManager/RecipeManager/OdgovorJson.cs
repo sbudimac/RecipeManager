@@ -12,6 +12,11 @@ namespace RecipeManager
     {
         private readonly JsonConverter<Recept> receptConverter;
         string[] vrednosti = { "title", "version", "href"};
+
+        public OdgovorJson(JsonSerializerOptions options)
+        {
+            receptConverter = (JsonConverter<Recept>)options.GetConverter(typeof(Recept));
+        }
         public override Odgovor Read(ref Utf8JsonReader reader, Type type, JsonSerializerOptions options)
         {
             if (reader.TokenType != JsonTokenType.StartObject)
@@ -25,6 +30,7 @@ namespace RecipeManager
                 {
                     throw new JsonException();
                 }
+                reader.Read();
                 string property = reader.GetString();
                 if (property != vrednosti[i])
                 {
@@ -37,7 +43,7 @@ namespace RecipeManager
                 }
                 else if (i == 1)
                 {
-                    odgovor.Version = reader.GetString();
+                    odgovor.Version = reader.GetDecimal();
                 }
                 else if (i == 2)
                 {
@@ -45,7 +51,7 @@ namespace RecipeManager
                 }
                 else
                 {
-                    while (reader.Read())
+                    do
                     {
                         if (reader.TokenType == JsonTokenType.EndObject)
                         {
@@ -59,7 +65,7 @@ namespace RecipeManager
                         reader.Read();
                         r = receptConverter.Read(ref reader, typeof(Recept), options);
                         odgovor.Results.Add(r);
-                    }
+                    } while (reader.Read());
                 }
             }
             throw new JsonException();
@@ -67,10 +73,21 @@ namespace RecipeManager
 
         public override void Write(Utf8JsonWriter writer, Odgovor value, JsonSerializerOptions options)
         {
-            throw new NotImplementedException();
+            writer.WriteStartObject();
+            writer.WriteString("title", value.Title);
+            writer.WriteNumber("version", value.Version);
+            writer.WriteString("href", value.Href);
+            writer.WritePropertyName("results");
+            writer.WriteStartArray();
+            foreach (Recept recept in value.Results)
+            {
+                receptConverter.Write(writer, recept, options);
+            }
+            writer.WriteEndArray();
+            writer.WriteEndObject();
         }
 
-        public override bool CanConvert(Type typeToConvert)
+        /*public bool CanConvert(Type typeToConvert)
         {
             if (!typeToConvert.IsGenericType)
             {
@@ -80,7 +97,10 @@ namespace RecipeManager
             {
                 return false;
             }
-            return base.CanConvert(typeToConvert);
-        }
+            if (typeToConvert == typeof(Odgovor))
+            {
+                return base.CanConvert(typeToConvert);
+            }
+        }*/
     }
 }

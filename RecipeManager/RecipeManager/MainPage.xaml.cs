@@ -57,6 +57,15 @@ namespace RecipeManager
                 odgovor = "Error: " + e1.HResult.ToString("X") + " Message:" + e1.Message;
             }
             Odgovor odgovorD = Odgovor.GetOdgovor(odgovor);
+            /*List<Recept> recepti = new List<Recept>();
+            recepti.Add(new Recept("kajgana", @"http:www.recipepuppy.com", "eggs, bacon", @"http:www.recipepuppy.com"));
+            recepti.Add(new Recept("kajgana", @"http:www.recipepuppy.com", "eggs, bacon", @"http:www.recipepuppy.com"));
+            Odgovor test = new Odgovor("kita", 4, @"http:www.recipepuppy.com", recepti);
+            var serializeOptions = new JsonSerializerOptions();
+            serializeOptions.Converters.Add(new ReceptJson());
+            serializeOptions.Converters.Add(new OdgovorJson(serializeOptions));
+            string woo = JsonSerializer.Serialize<Odgovor>(test, serializeOptions);*/
+            lista.Items.Add(odgovorD.Results);
         }
     }
 }
