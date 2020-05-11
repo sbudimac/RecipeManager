@@ -28,10 +28,11 @@ namespace RecipeManager
 
         public static Odgovor GetOdgovor(string json)
         {
-            var deserializeOptions = new JsonSerializerOptions();
-            deserializeOptions.Converters.Add(new OdgovorJson(deserializeOptions));
-            deserializeOptions.Converters.Add(new ReceptJson());
-            return JsonSerializer.Deserialize<Odgovor>(json);
+            var serializeOptions = new JsonSerializerOptions();
+            serializeOptions.Converters.Add(new ReceptJson());
+            serializeOptions.Converters.Add(new OdgovorJson(serializeOptions));
+            Odgovor odgovorD = JsonSerializer.Deserialize<Odgovor>(json, serializeOptions);
+            return odgovorD;
         }
 
         public List<Recept> Rezultati

@@ -19,34 +19,34 @@ namespace RecipeManager
                 throw new JsonException();
             }
             Recept recept=new Recept();
-            for (int i = 0; i < vrednosti.Length; i++)
+            while (reader.Read())
             {
                 if (reader.TokenType == JsonTokenType.EndObject)
                 {
-                    throw new JsonException();
+                    return recept;
                 }
-                string property = reader.GetString();
-                if (property != vrednosti[i])
+                if (reader.TokenType == JsonTokenType.PropertyName)
                 {
-                    throw new JsonException();
-                }
-                reader.Read();
-                if (i == 0)
-                {
-                    recept.Title = reader.GetString();
-                }else if (i == 1)
-                {
-                    recept.Href = reader.GetString();
-                }else if (i == 2)
-                {
-                    recept.Ingredients = reader.GetString();
-                }
-                else
-                {
-                    recept.Thumbnail = reader.GetString();
+                    string property = reader.GetString();
+                    reader.Read();
+                    switch (property.ToLower())
+                    {
+                        case "title":
+                            recept.Title = reader.GetString();
+                            break;
+                        case "href":
+                            recept.Href = reader.GetString();
+                            break;
+                        case "ingredients":
+                            recept.Ingredients = reader.GetString();
+                            break;
+                        case "thumbnail":
+                            recept.Thumbnail = reader.GetString();
+                            break;
+                    }
                 }
             }
-            return recept;
+            throw new JsonException();
         }
 
         public override void Write(Utf8JsonWriter writer, Recept value, JsonSerializerOptions options)

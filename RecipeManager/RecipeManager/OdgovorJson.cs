@@ -11,7 +11,6 @@ namespace RecipeManager
     class OdgovorJson : JsonConverter<Odgovor>
     {
         private readonly JsonConverter<Recept> receptConverter;
-        string[] vrednosti = { "title", "version", "href"};
 
         public OdgovorJson(JsonSerializerOptions options)
         {
@@ -24,48 +23,49 @@ namespace RecipeManager
                 throw new JsonException();
             }
             Odgovor odgovor = new Odgovor();
-            for (int i = 0; i < vrednosti.Length; i++)
+            while (reader.Read())
             {
                 if (reader.TokenType == JsonTokenType.EndObject)
                 {
                     throw new JsonException();
                 }
-                reader.Read();
-                string property = reader.GetString();
-                if (property != vrednosti[i])
+                else if (reader.TokenType == JsonTokenType.PropertyName)
                 {
-                    throw new JsonException();
-                }
-                reader.Read();
-                if (i == 0)
-                {
-                    odgovor.Title = reader.GetString();
-                }
-                else if (i == 1)
-                {
-                    odgovor.Version = reader.GetDecimal();
-                }
-                else if (i == 2)
-                {
-                    odgovor.Href = reader.GetString();
+                    string propertyName = reader.GetString();
+                    reader.Read();
+                    switch (propertyName.ToLower())
+                    {
+                        case "title":
+                            odgovor.Title = reader.GetString();
+                            break;
+                        case "version":
+                            odgovor.Version = reader.GetDecimal();
+                            break;
+                        case "href":
+                            odgovor.Href = reader.GetString();
+                            break;
+                        case "results":
+                            if (reader.TokenType != JsonTokenType.StartArray)
+                            {
+                                throw new JsonException();
+                            }
+                            odgovor.Results = new List<Recept>();
+                            break;
+                    }
                 }
                 else
                 {
-                    do
+                    if (reader.TokenType == JsonTokenType.EndArray)
                     {
+                        reader.Read();
                         if (reader.TokenType == JsonTokenType.EndObject)
                         {
                             return odgovor;
                         }
-                        if (reader.TokenType != JsonTokenType.PropertyName)
-                        {
-                            throw new JsonException();
-                        }
-                        Recept r;
-                        reader.Read();
-                        r = receptConverter.Read(ref reader, typeof(Recept), options);
-                        odgovor.Results.Add(r);
-                    } while (reader.Read());
+                    }
+                    Recept r;
+                    r = receptConverter.Read(ref reader, typeof(Recept), options);
+                    odgovor.Results.Add(r);
                 }
             }
             throw new JsonException();
@@ -85,22 +85,6 @@ namespace RecipeManager
             }
             writer.WriteEndArray();
             writer.WriteEndObject();
-        }
-
-        /*public bool CanConvert(Type typeToConvert)
-        {
-            if (!typeToConvert.IsGenericType)
-            {
-                return false;
-            }
-            if (typeToConvert.GetGenericTypeDefinition() != typeof(List<Recept>))
-            {
-                return false;
-            }
-            if (typeToConvert == typeof(Odgovor))
-            {
-                return base.CanConvert(typeToConvert);
-            }
-        }*/
+        }  
     }
 }
