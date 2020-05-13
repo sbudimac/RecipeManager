@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Buffers.Text;
+using System.Text.RegularExpressions;
 
 namespace RecipeManager
 {
@@ -33,15 +34,19 @@ namespace RecipeManager
                     {
                         case "title":
                             recept.Title = reader.GetString();
+                            recept.Title = filtriraj(recept.Title);
                             break;
                         case "href":
                             recept.Href = reader.GetString();
+                            recept.Href = filtriraj(recept.Href);
                             break;
                         case "ingredients":
                             recept.Ingredients = reader.GetString();
+                            recept.Ingredients = filtriraj(recept.Ingredients);
                             break;
                         case "thumbnail":
                             recept.Thumbnail = reader.GetString();
+                            recept.Thumbnail = filtriraj(recept.Thumbnail);
                             break;
                     }
                 }
@@ -57,6 +62,12 @@ namespace RecipeManager
             writer.WriteString("ingredients", value.Ingredients);
             writer.WriteString("thumbnail", value.Thumbnail);
             writer.WriteEndObject();
+        }
+
+        private string filtriraj(string stavka)
+        {
+            string filter = Regex.Replace(stavka, @"\t|\n|\r", "");
+            return filter;
         }
     }
 }
