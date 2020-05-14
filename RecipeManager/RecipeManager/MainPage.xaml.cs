@@ -1,19 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 using Windows.Web.Http;
-using System.Text.Json;
+using System.Threading.Tasks;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -31,6 +21,33 @@ namespace RecipeManager
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
+            string url = BuildUrl();
+            string odgovor = await SendReceiveHTTPRequest(url);
+            Odgovor odgovorD = Odgovor.GetOdgovor(odgovor);
+            IspisUListu(odgovorD);
+        }
+
+        private static async Task<string> SendReceiveHTTPRequest(string url)
+        {
+            HttpClient httpKlijent = new HttpClient();
+            Uri izvor = new Uri(url);
+            string odgovor;
+            try
+            {
+                HttpResponseMessage httpOdgovor = await httpKlijent.GetAsync(izvor);
+                httpOdgovor.EnsureSuccessStatusCode();
+                odgovor = await httpOdgovor.Content.ReadAsStringAsync();
+            }
+            catch (Exception e1)
+            {
+                odgovor = "Error: " + e1.HResult.ToString("X") + " Message:" + e1.Message;
+            }
+
+            return odgovor;
+        }
+
+        private string BuildUrl()
+        {
             string url = "http://www.recipepuppy.com/api/?i=";
             List<string> sastojci = new List<string>();
             char[] separatori = { ',', ' ' };
@@ -41,26 +58,24 @@ namespace RecipeManager
                 url += sastojci[i] + ",";
             }
             url += sastojci[sastojci.Count - 1];
-            HttpClient httpKlijent = new HttpClient();
-            var headers = httpKlijent.DefaultRequestHeaders;
-            Uri izvor = new Uri(url);
-            HttpResponseMessage httpOdgovor = new HttpResponseMessage();
-            string odgovor = "";
-            try
+            return url;
+        }
+
+        private void IspisUListu(Odgovor odgovorD)
+        {
+            lista.Items.Clear();
+            if (odgovorD != null)
             {
-                httpOdgovor = await httpKlijent.GetAsync(izvor);
-                httpOdgovor.EnsureSuccessStatusCode();
-                odgovor = await httpOdgovor.Content.ReadAsStringAsync();
+                foreach (Recept r in odgovorD.Results)
+                {
+                    lista.Items.Add(r);
+                }
             }
-            catch(Exception e1)
+            else
             {
-                odgovor = "Error: " + e1.HResult.ToString("X") + " Message:" + e1.Message;
+                lista.Items.Add("x");
             }
-            Odgovor odgovorD = Odgovor.GetOdgovor(odgovor);
-            foreach (Recept r in odgovorD.Results)
-            {
-                lista.Items.Add(r);
-            }
+            return;
         }
     }
 }

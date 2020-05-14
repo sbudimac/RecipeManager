@@ -9,8 +9,30 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <Button Content="Dodaj" HorizontalAlignment="Left" Margin="583,61,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.246,0.844" Click="Button_Click"/>
-        <TextBox x:Name="tbUnos" HorizontalAlignment="Left" Margin="115,61,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="448"/>
-        <ListView x:Name="lista" HorizontalAlignment="Left" Height="364" Margin="115,127,0,0" VerticalAlignment="Top" Width="1758"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="331*"/>
+            <ColumnDefinition Width="309*"/>
+        </Grid.ColumnDefinitions>
+        <Button Content="Dodaj" Margin="497,61,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.246,0.844" Click="Button_Click"/>
+        <TextBox x:Name="tbUnos" HorizontalAlignment="Left" Margin="38,61,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="448"/>
+        <ListView x:Name="lista" HorizontalAlignment="Left" Height="921" Margin="38,127,0,0" VerticalAlignment="Top" Width="1835">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="local:Recept">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="60"/>
+                            <ColumnDefinition MaxWidth="200"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Image Source="{x:Bind Image}" Width="60" Height="60" HorizontalAlignment="Left"/>
+                        <TextBlock Text="{x:Bind Title}" Foreground="Black" FontStyle="Italic" FontSize="16" VerticalAlignment="Center" Grid.Column="1" Grid.Row="1" />
+                        <TextBlock Text="{x:Bind Ingredients}" Foreground="Black" FontSize="14" VerticalAlignment="Center" Grid.Column="1"/>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
     </Grid>
 </Page>

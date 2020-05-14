@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Text.Json;
-using System.Text.Json.Serialization;
+using System.Diagnostics;
 
 namespace RecipeManager
 {
-    //[JsonConverter(typeof(OdgovorJson))]
     public class Odgovor
     {
         public string Title { get; set; }
@@ -16,22 +12,21 @@ namespace RecipeManager
         public string Href { get; set; }
         public List<Recept> Results { get; set; }
 
-        public Odgovor() { }
-  
-        public Odgovor(string title, decimal version, string href, List<Recept> results)
-        {
-            this.Title = title;
-            this.Version = version;
-            this.Href = href;
-            this.Results = results;
-        }
-
         public static Odgovor GetOdgovor(string json)
         {
-            var serializeOptions = new JsonSerializerOptions();
+            JsonSerializerOptions serializeOptions = new JsonSerializerOptions();
             serializeOptions.Converters.Add(new ReceptJson());
             serializeOptions.Converters.Add(new OdgovorJson(serializeOptions));
-            Odgovor odgovorD = JsonSerializer.Deserialize<Odgovor>(json, serializeOptions);
+            Odgovor odgovorD = null;
+            try
+            {
+                odgovorD = JsonSerializer.Deserialize<Odgovor>(json, serializeOptions);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Error: " + e.HResult.ToString("X") + " Message:" + e.Message);
+                Debug.WriteLine("Web site does not support your ingredients.");
+            }
             return odgovorD;
         }
 

@@ -1,25 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Buffers.Text;
 using System.Text.RegularExpressions;
 
 namespace RecipeManager
 {
-    class ReceptJson : JsonConverter<Recept>
+    public class ReceptJson : JsonConverter<Recept>
     {
-        string[] vrednosti = { "title", "href", "ingredients", "thumbnail" };
         public override Recept Read(ref Utf8JsonReader reader, Type type, JsonSerializerOptions options)
         {
             if (reader.TokenType != JsonTokenType.StartObject)
             {
                 throw new JsonException();
             }
-            Recept recept=new Recept();
+            Recept recept = new Recept();
             while (reader.Read())
             {
                 if (reader.TokenType == JsonTokenType.EndObject)
@@ -34,20 +28,22 @@ namespace RecipeManager
                     {
                         case "title":
                             recept.Title = reader.GetString();
-                            recept.Title = filtriraj(recept.Title);
+                            recept.Title = Filtriraj(recept.Title);
                             break;
                         case "href":
                             recept.Href = reader.GetString();
-                            recept.Href = filtriraj(recept.Href);
+                            recept.Href = Filtriraj(recept.Href);
                             break;
                         case "ingredients":
                             recept.Ingredients = reader.GetString();
-                            recept.Ingredients = filtriraj(recept.Ingredients);
+                            recept.Ingredients = Filtriraj(recept.Ingredients);
                             break;
                         case "thumbnail":
                             recept.Thumbnail = reader.GetString();
-                            recept.Thumbnail = filtriraj(recept.Thumbnail);
+                            recept.Thumbnail = Filtriraj(recept.Thumbnail);
                             break;
+                        default:
+                            throw new JsonException();
                     }
                 }
             }
@@ -64,7 +60,7 @@ namespace RecipeManager
             writer.WriteEndObject();
         }
 
-        private string filtriraj(string stavka)
+        private string Filtriraj(string stavka)
         {
             string filter = Regex.Replace(stavka, @"\t|\n|\r", "");
             return filter;

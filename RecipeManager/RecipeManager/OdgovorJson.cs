@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace RecipeManager
 {
-    class OdgovorJson : JsonConverter<Odgovor>
+    public class OdgovorJson : JsonConverter<Odgovor>
     {
         private readonly JsonConverter<Recept> receptConverter;
 
@@ -51,6 +48,8 @@ namespace RecipeManager
                             }
                             odgovor.Results = new List<Recept>();
                             break;
+                        default:
+                            throw new JsonException();
                     }
                 }
                 else
@@ -85,6 +84,6 @@ namespace RecipeManager
             }
             writer.WriteEndArray();
             writer.WriteEndObject();
-        }  
+        }
     }
 }
